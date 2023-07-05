@@ -1,0 +1,23 @@
+---
+- name: Remove Grafana
+  hosts: hosts
+  tasks:
+  - name: Remove apt key
+    ansible.builtin.apt_key:
+      url: https://packages.grafana.com/gpg.key
+      id: 4E40DDF6D76E284A4A6780E48C8C34C524098CB6
+      state: absent
+  - name: Remove Grafana repo from sources.list
+    ansible.builtin.apt.repository:
+      repo: https://packages.grafana.com/oss/deb stable main
+      filename: grafana
+      state: absent
+  - name: Ensure Grafana is stopped and disabled
+    ansible.builtin.systemd:
+      name: grafana-server
+      enabled: no
+      state: stopped
+  - name: Remove Grafana
+    ansible.builtin.apt:
+      name: grafana
+      state: absent
